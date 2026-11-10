@@ -16,6 +16,7 @@
 In search.py, you will implement generic search algorithms which are called by
 Pacman agents (in searchAgents.py).
 """
+from traceback import print_tb
 
 import util
 
@@ -68,6 +69,8 @@ def tinyMazeSearch(problem):
     sequence of moves will be incorrect, so only use this for tinyMaze.
     """
     from game import Directions
+    n = Directions.NORTH
+    e = Directions.EAST
     s = Directions.SOUTH
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
@@ -87,17 +90,101 @@ def depthFirstSearch(problem: SearchProblem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
+
+    fringe = util.Stack()
+    fringe.push((problem.getStartState(), []))
+    closed = set()
+    node = {"state" : (), "path": []}
+
+
+    while not fringe.isEmpty():
+        node["state"], node["path"] = fringe.pop()
+
+
+        if node.get("state") in closed:
+            continue
+
+        if problem.isGoalState(node.get("state")):
+            return node.get("path")
+
+        closed.add(node.get("state"))
+
+        for successor in problem.getSuccessors(node.get("state")):
+            if successor[0] not in closed:
+                fringe.push((successor[0], node.get("path") + [successor[1]]))
+
+
+
     util.raiseNotDefined()
+    return None
+
+
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
+
+    fringe = util.Queue()
+    fringe.push((problem.getStartState(), []))
+    closed = set()
+    node = {"state": (), "path": []}
+
+    while not fringe.isEmpty():
+        node["state"], node["path"] = fringe.pop()
+
+        if node.get("state") in closed:
+            continue
+
+        if problem.isGoalState(node.get("state")):
+            return node.get("path")
+
+        closed.add(node.get("state"))
+
+        for successor in problem.getSuccessors(node.get("state")):
+            if successor[0] not in closed:
+                fringe.push((successor[0], node.get("path") + [successor[1]]))
+
     util.raiseNotDefined()
+    return None
+
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
+
+    fringe = util.PriorityQueue()
+    fringe.push((problem.getStartState(), []), 0)
+    closed = set()
+    node = {"state": (), "path": []}
+
+
+    while not fringe.isEmpty():
+
+        node["state"], node["path"] = fringe.pop()
+
+
+        if node.get("state") in closed:
+            continue
+
+        if problem.isGoalState(node.get("state")):
+            return node.get("path")
+
+        closed.add(node.get("state"))
+
+        for successor in problem.getSuccessors(node.get("state")):
+
+            successor_state = successor[0]
+            successor_action = successor[1]
+
+            new_path = node.get("path") + [successor_action]
+            new_cost = problem.getCostOfActions(new_path)
+
+            if successor_state not in closed:
+                fringe.update((successor_state, new_path), new_cost)
+
+
     util.raiseNotDefined()
+    return None
 
 def nullHeuristic(state, problem=None):
     """
@@ -109,6 +196,14 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+
+
+
+    open = util.PriorityQueue()
+    open.push(problem.getStartState(), heuristic(problem.getStartState(),  problem))
+
+
+
     util.raiseNotDefined()
 
 
