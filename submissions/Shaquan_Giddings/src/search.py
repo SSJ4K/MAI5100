@@ -144,7 +144,6 @@ def breadthFirstSearch(problem: SearchProblem):
             if successor[0] not in closed:
                 fringe.push((successor[0], node.get("path") + [successor[1]]))
 
-    util.raiseNotDefined()
     return None
 
 
@@ -183,7 +182,6 @@ def uniformCostSearch(problem: SearchProblem):
                 fringe.update((successor_state, new_path), new_cost)
 
 
-    util.raiseNotDefined()
     return None
 
 def nullHeuristic(state, problem=None):
