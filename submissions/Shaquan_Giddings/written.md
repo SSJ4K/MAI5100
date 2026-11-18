@@ -1,7 +1,7 @@
 # HW0 Written Answers
 
-**Name:**
-**Student ID:**
+**Name: Shaquan Antone Giddings**
+**Student ID: 1037224**
 
 ---
 
@@ -9,10 +9,17 @@
 
 ### B1. State spaces and uninformed search
 
-1.
-2.
-3.
-4.
+1.![state_diagram.jpeg](../../../../Downloads/state_diagram.jpeg)
+
+<br>
+<br>
+
+2. <br>BFS: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11<br>
+    DFS limit = 3: 1 -> 2 -> 4 -> 5 -> 3 -> 6 -> 7 <br>
+    Iterative Deepening: 1 -> 1 -> 2 -> 3 -> 1 -> 2 -> 4 -> 5 -> 3 -> 6 -> 7 -> 1 -> 2 -> 4 -> 8 -> 9 -> 5 -> 10 -> 11<br>
+
+3. <br>Bidirectional search would solve this problem rather quickly, as the nodes expadning from the start state would join the ones coming from the gol state at around two levels. Whether or not this path is the best path is of no concern to the joining function, but that of a terminating function.<br>The branching factors moving forward are the two child nodes, and each node has one parent node making that the branching factor going backwards.<br><br>
+4. <br>1. writing the goal (g) in binary<br> 2. Remove the leading 1<br>3. Read the remaining bits as actions<br><br>Regarding the value of a good problem formulation, we can see that in trimming unnecessary data the actions needed for an agent to reach its goal becomes much clearer.
 
 ### B2. Problem formulation and heuristics
 
