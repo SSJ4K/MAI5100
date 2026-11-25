@@ -86,11 +86,15 @@ class GuyanaRouteProblem(search.SearchProblem):
 
     def getStartState(self):
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.start
 
     def isGoalState(self, state):
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return state == self.goal
+
+    def _stepCost(self, km, hours):
+        """Cost of one road under the current costMode."""
+        return km if self.costMode == "km" else hours
 
     def getSuccessors(self, state):
         """
@@ -100,7 +104,11 @@ class GuyanaRouteProblem(search.SearchProblem):
         """
         self._expanded += 1  # do not change
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        successors = []
+        for neighbour, km, hours, isFerry in self.roadMap.roads.get(state, []):
+            successors.append((neighbour, neighbour, self._stepCost(km, hours)))
+
+        return successors
 
     def getCostOfActions(self, actions):
         """
@@ -108,8 +116,25 @@ class GuyanaRouteProblem(search.SearchProblem):
         Return 999999 if any step is not a road.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        if actions is None:
+            return 999999
 
+        current = self.start
+        totalCost = 0.0
+
+        for next in actions:
+            costs = [self._stepCost(km, hours)
+                     for neighbour, km, hours, isFerry in self.roadMap.roads.get(current, [])
+                     if neighbour == next
+                     ]
+
+            if not costs:
+                return 999999
+
+            totalCost += min(costs)
+            current = next
+
+        return totalCost
 
 def straightLineHeuristic(state, problem):
     """
@@ -122,7 +147,22 @@ def straightLineHeuristic(state, problem):
     and justify your choice in your written answers.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    roadMap = problem.roadMap
+    distanceKm = haversineKm(roadMap.coords[state], roadMap.coords[problem.goal])
+    if problem.costMode == "km":
+        return distanceKm
+
+    return distanceKm/ _maxSpeedKmh(roadMap)
+
+
+def _maxSpeedKmh(roadMap):
+    if not hasattr(roadMap, "_maxSpeedKmh"):
+        speeds = [km / hours
+                  for edges in roadMap.roads.values()
+                  for _, km, hours, _ in edges if hours > 0]
+        roadMap._maxSpeedKmh = max(speeds) if speeds else float("inf")
+    return roadMap._maxSpeedKmh
+
 
 
 def runExperiment(start, goal, costMode="km"):
@@ -156,7 +196,25 @@ def greedySearch(problem, heuristic):
     Graph search (keep a set of expanded states).
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    start = problem.getStartState()
+    frontier = util.PriorityQueue()
+
+    frontier.push((start, []), heuristic(start, problem))
+    expanded = set()
+
+    while not frontier.isEmpty():
+        state, actions = frontier.pop()
+        if state in expanded:
+            continue
+        if problem.isGoalState(state):
+            return actions
+
+        expanded.add(state)
+        for successor, action, stepCost in problem.getSuccessors(state):
+            if successor not in expanded:
+                frontier.push((successor, actions + [action]), heuristic(successor, problem))
+
+    return []
 
 
 if __name__ == "__main__":
